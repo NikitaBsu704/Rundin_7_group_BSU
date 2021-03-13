@@ -72,7 +72,6 @@ public class Field extends JPanel
 	    	time = TimeReleased - TimeClicked;
 	    	if(time >= 100 )
 	    	{
-	    		///инициализация общих параметров
 		    	System.out.print ("MouseReleased3");
 		    	int X_end,Y_end,speed1;
 		    	double R,Cos,Sin;
@@ -80,12 +79,10 @@ public class Field extends JPanel
 		    	Y_end = Event3.getY();
 		    	R = Math.sqrt((X_end-Mouse_x)*(X_end-Mouse_x)+(Y_end-Mouse_y)*(Y_end-Mouse_y));
 		    	if(R < 0.1) {R = 0.1;}
+		    	speed1 = (int)(time/R);
 		    	Cos = (X_end-Mouse_x)/R;
 		    	Sin = (Y_end-Mouse_y)/R;
-		    	R = R*10;
-		    	speed1 = (int)(R/time);
-		    	///пробегаем массив шаров
-		    	///Если попали в радиус шара-устанавливаем новые параметры
+		    	
 		    	for (BouncingBall ball: balls)
 				{
 					if(ball.CheckDistance(Mouse_x, Mouse_y)) 

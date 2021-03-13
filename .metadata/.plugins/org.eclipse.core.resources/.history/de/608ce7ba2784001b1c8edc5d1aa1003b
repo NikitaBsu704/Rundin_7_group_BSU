@@ -4,8 +4,6 @@ package bsu.rfe.java.group7.lab6.Ryndin.var;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-
-
 public class BouncingBall implements Runnable 
 {
 	// Максимальный радиус, который может иметь мяч

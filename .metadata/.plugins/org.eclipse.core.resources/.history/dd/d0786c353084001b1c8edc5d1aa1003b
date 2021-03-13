@@ -72,7 +72,6 @@ public class Field extends JPanel
 	    	time = TimeReleased - TimeClicked;
 	    	if(time >= 100 )
 	    	{
-	    		///инициализация общих параметров
 		    	System.out.print ("MouseReleased3");
 		    	int X_end,Y_end,speed1;
 		    	double R,Cos,Sin;
@@ -80,21 +79,13 @@ public class Field extends JPanel
 		    	Y_end = Event3.getY();
 		    	R = Math.sqrt((X_end-Mouse_x)*(X_end-Mouse_x)+(Y_end-Mouse_y)*(Y_end-Mouse_y));
 		    	if(R < 0.1) {R = 0.1;}
+		    	speed1 = (int)(time/R);
 		    	Cos = (X_end-Mouse_x)/R;
 		    	Sin = (Y_end-Mouse_y)/R;
-		    	R = R*10;
-		    	speed1 = (int)(R/time);
-		    	///пробегаем массив шаров
-		    	///Если попали в радиус шара-устанавливаем новые параметры
-		    	for (BouncingBall ball: balls)
-				{
-					if(ball.CheckDistance(Mouse_x, Mouse_y)) 
-					{
-						ball.SetDirection(3*Cos,3*Sin);
-						ball.SetSpeed(speed1);
-					}
-				}
 		    	
+		    	ActivateClick(Mouse_x,Mouse_y,Cos,Sin,speed1);
+		    	//CurrentBall.SetDirection((X_end-Mouse_x)/R,(Y_end-Mouse_y)/R);
+		    	//CurrentBall.SetSpeed(time /(int)(R));
 	    	}
 	    	///Вне зависимости от времени включить перемещение
 	    	resume();
@@ -163,7 +154,7 @@ public class Field extends JPanel
 		// Будим все ожидающие продолжения потоки
 		notifyAll();
 	}
-	/*
+	
 	public void ActivateClick(int Mouse_x,int Mouse_y,double cos,double sin,int speed)
 	{
 		double R;
@@ -171,12 +162,11 @@ public class Field extends JPanel
 		{
 			if(ball.CheckDistance(Mouse_x, Mouse_y)) 
 			{
-				ball.SetDirection(3*cos,3*sin);
-				ball.SetSpeed(speed);
+				
 			}
 		}
 	}
-	*/
+	
 	
 	// Синхронизированный метод проверки, может ли мяч двигаться 
 	// (не включен ли режим паузы?)

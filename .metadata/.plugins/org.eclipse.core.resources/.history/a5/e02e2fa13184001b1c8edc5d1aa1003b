@@ -82,7 +82,6 @@ public class Field extends JPanel
 		    	if(R < 0.1) {R = 0.1;}
 		    	Cos = (X_end-Mouse_x)/R;
 		    	Sin = (Y_end-Mouse_y)/R;
-		    	R = R*10;
 		    	speed1 = (int)(R/time);
 		    	///пробегаем массив шаров
 		    	///≈сли попали в радиус шара-устанавливаем новые параметры

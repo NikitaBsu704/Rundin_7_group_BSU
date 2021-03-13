@@ -19,12 +19,12 @@ public class Field extends JPanel
 {
 	// Флаг приостановленности движения
 	private boolean paused;
-	private boolean MouseClick;
 	// Динамический список скачущих мячей
 	private ArrayList<BouncingBall> balls = new ArrayList<BouncingBall>(10);
 	// Класс таймер отвечает за регулярную генерацию событий ActionEvent
 	// При создании его экземпляра используется анонимный класс, 
 	// реализующий интерфейс ActionListener
+	int time = 0;
 	private Timer repaintTimer = new Timer(10, new ActionListener() 
 	{
 		public void actionPerformed(ActionEvent ev) 
@@ -56,7 +56,7 @@ public class Field extends JPanel
 			{
 				if(ball.CheckDistance(Mouse_x, Mouse_y)) 
 				{
-					pause();break;
+					paused = true;break;
 				}
 			}
 			TimeClicked = System.currentTimeMillis();
@@ -68,36 +68,20 @@ public class Field extends JPanel
 	    	///на случай если пользователь отпустит мышку слишком рано 
 	    	///(10 число - около 100мс время реакции человека)
 	    	TimeReleased = System.currentTimeMillis();
-	    	double time = 0;
-	    	time = TimeReleased - TimeClicked;
+	    	time = (int)(TimeReleased - TimeClicked);
 	    	if(time >= 100 )
 	    	{
-	    		///инициализация общих параметров
 		    	System.out.print ("MouseReleased3");
-		    	int X_end,Y_end,speed1;
-		    	double R,Cos,Sin;
+		    	double X_end,Y_end,R;
 		    	X_end = Event3.getX();
 		    	Y_end = Event3.getY();
 		    	R = Math.sqrt((X_end-Mouse_x)*(X_end-Mouse_x)+(Y_end-Mouse_y)*(Y_end-Mouse_y));
 		    	if(R < 0.1) {R = 0.1;}
-		    	Cos = (X_end-Mouse_x)/R;
-		    	Sin = (Y_end-Mouse_y)/R;
-		    	R = R*10;
-		    	speed1 = (int)(R/time);
-		    	///пробегаем массив шаров
-		    	///Если попали в радиус шара-устанавливаем новые параметры
-		    	for (BouncingBall ball: balls)
-				{
-					if(ball.CheckDistance(Mouse_x, Mouse_y)) 
-					{
-						ball.SetDirection(3*Cos,3*Sin);
-						ball.SetSpeed(speed1);
-					}
-				}
-		    	
+		    	//CurrentBall.SetDirection((X_end-Mouse_x)/R,(Y_end-Mouse_y)/R);
+		    	//CurrentBall.SetSpeed(time /(int)(R));
 	    	}
 	    	///Вне зависимости от времени включить перемещение
-	    	resume();
+	    	paused = false;notifyAll();
 	    }
 	  }
 	  
@@ -122,7 +106,7 @@ public class Field extends JPanel
 	{
 		// Установить цвет заднего фона белым
 		setBackground(Color.WHITE);
-	    addMouseListener(new MouseHandler());
+	    //addMouseListener(new MouseHandler());
 	    // addMouseMotionListener(new MouseMotionHandler());
 		// Запустить таймер
 		repaintTimer.start();
@@ -163,21 +147,6 @@ public class Field extends JPanel
 		// Будим все ожидающие продолжения потоки
 		notifyAll();
 	}
-	/*
-	public void ActivateClick(int Mouse_x,int Mouse_y,double cos,double sin,int speed)
-	{
-		double R;
-		for (BouncingBall ball: balls)
-		{
-			if(ball.CheckDistance(Mouse_x, Mouse_y)) 
-			{
-				ball.SetDirection(3*cos,3*sin);
-				ball.SetSpeed(speed);
-			}
-		}
-	}
-	*/
-	
 	// Синхронизированный метод проверки, может ли мяч двигаться 
 	// (не включен ли режим паузы?)
 	public synchronized void canMove(BouncingBall ball) throws
