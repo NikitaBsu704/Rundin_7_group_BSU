@@ -13,7 +13,7 @@ public class Start
 			@Override
 			public void run() 
 			{
-				final MainFrame frame = new MainFrame();
+				InitFrame frame = new InitFrame();
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.setVisible(true);
 			}

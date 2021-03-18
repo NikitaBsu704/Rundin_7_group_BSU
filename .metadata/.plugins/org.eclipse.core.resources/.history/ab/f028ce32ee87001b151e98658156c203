@@ -1,0 +1,215 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+
+//Импортируются классы, используемые в приложении
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+@SuppressWarnings("serial")
+//Главный класс приложения, он же класс фрейма
+public class InitFrame extends JFrame 
+{
+	
+	private static final int WIDTH = 400;
+	private static final int HEIGHT = 400;
+	
+	
+	Box contentBox = Box.createVerticalBox();
+	
+	private ButtonGroup AllButtons = new ButtonGroup();
+	
+	private JTextField AdressField;
+	private JTextField UserName;
+	private JTextField UserSurname;
+	private JTextField KeyWord;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public InitFrame() 
+	{
+		super("Вычисление формулы");
+		setSize(WIDTH, HEIGHT);
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		setLocation((kit.getScreenSize().width - WIDTH)/2,
+		(kit.getScreenSize().height - HEIGHT) / 2);
+		
+		
+		
+		
+		Icon icon = new ImageIcon("D:\\@images_for_eclipse\triangle_001.png");
+		JButton button_Request = new JButton(icon);
+		button_Request.setIcon        (new ImageIcon("D:\\@images_for_eclipse/triangle_001.png"));
+		button_Request.setRolloverIcon(new ImageIcon("D:\\@images_for_eclipse/triangle_002.png"));
+		button_Request.setPressedIcon (new ImageIcon("D:\\@images_for_eclipse/triangle_002.png"));
+		button_Request.setDisabledIcon(new ImageIcon("D:\\@images_for_eclipse/triangle_001.png"));
+		
+		button_Request.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent ev) 
+			{
+				try 
+				{
+				     String destinationAddress = AdressField.getText();
+					
+				} 
+				catch (NumberFormatException ex) 
+				{
+					JOptionPane.showMessageDialog(InitFrame.this,"Ошибка в формате записи адреса сервера", "Ошибочный формат числа",JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+		
+		JButton button_send = new JButton("Отправить данные");
+		button_send.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent ev) 
+			{
+				
+				try 
+				{
+				     String destinationAddress = AdressField.getText();
+				     String Name = UserName.getText();
+				     String Surname = UserSurname.getText();
+				     String Key = KeyWord.getText();
+				} 
+				catch (NumberFormatException ex) 
+				{
+					JOptionPane.showMessageDialog(InitFrame.this,"Ошибка в формате записи адреса сервера", "Ошибочный формат числа",JOptionPane.WARNING_MESSAGE);
+				}
+				
+		    }
+		});
+		
+		
+		
+		/*
+		
+		 * private Box RequestBox = Box.createHorizontalBox();
+	private Box AuthorizationBox = Box.createHorizontalBox();
+	
+		private Box RequestBox = Box.createHorizontalBox();
+		private Box AuthorizationBox = Box.createHorizontalBox();
+		private JTextField AdressField;
+		private JTextField UserName;
+		private JTextField UserSurname;
+		private JTextField KeyWord;
+		private boolean    Answered;
+		private boolean    IsConnected;
+		private ButtonGroup AllButtons = new ButtonGroup();
+		
+		
+		private Box RequestBox = Box.createHorizontalBox();
+		RequestBox.add(Box.createHorizontalGlue());
+		RequestBox.add(AdressField);
+		RequestBox.add(Box.createHorizontalGlue());
+		RequestBox.add(button_request);
+		RequestBox.add(Box.createHorizontalGlue());
+		JLabel labelForStatus = new JLabel("Статус запроса:");
+		RequestBox.add(labelForStatus);
+		RequestBox.add(Box.createHorizontalStrut(10));
+		StatusField = new JTextField("Nothing", 10);
+		RequestBox.add(Box.createHorizontalGlue());
+		RequestBox.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		Box hboxFormulaDisplay = Box.createHorizontalBox();
+		.add(Box.createHorizontalGlue());
+		.add(Send_button);
+		.add(Box.createHorizontalGlue());
+		.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		Box hboxFormulaDisplay = Box.createHorizontalBox();
+		.add(Box.createHorizontalGlue());
+		 Label label_N = new JLabel("Имя");
+		.add(label_N);
+		.add(Box.createHorizontalStrut(10));
+		.add(Name);
+		.add(Box.createHorizontalGlue());
+		
+		 
+		 Label label_SN = new JLabel("Фамилия");
+		.add(label_SN);
+		.add(Box.createHorizontalStrut(10));
+		.add(Surname);
+		 .add(Box.createHorizontalGlue());
+		 
+		 
+		 Label label_Key = new JLabel("Пароль");
+		.add(label_Key);
+		.add(Box.createHorizontalStrut(10));
+		.add(KeyWord);
+		.add(Box.createHorizontalGlue());
+		.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		
+		
+		
+		
+		
+		Box contentBox = Box.createVerticalBox();
+		.add(Box.createVerticalGlue());
+		contentBox.add();
+		contentBox.add();
+		contentBox.add();
+		contentBox.add(Box.createVerticalGlue());
+		getContentPane().add(contentBox, BorderLayout.CENTER);
+		
+		*/
+		
+		
+		
+		///Картинка для формулы
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+
+}

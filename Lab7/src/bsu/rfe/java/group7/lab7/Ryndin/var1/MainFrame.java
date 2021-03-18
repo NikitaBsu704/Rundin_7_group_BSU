@@ -44,18 +44,15 @@ public class MainFrame extends JFrame
 	public MainFrame() 
 	{
 		super(FRAME_TITLE);
-		setMinimumSize(
-		new Dimension(FRAME_MINIMUM_WIDTH, FRAME_MINIMUM_HEIGHT));
+		setMinimumSize(new Dimension(FRAME_MINIMUM_WIDTH, FRAME_MINIMUM_HEIGHT));
 		// Центрирование окна
 		final Toolkit kit = Toolkit.getDefaultToolkit();
-		setLocation((kit.getScreenSize().width - getWidth()) / 2,
-		(kit.getScreenSize().height - getHeight()) / 2);
+		setLocation((kit.getScreenSize().width - getWidth()) / 2,(kit.getScreenSize().height - getHeight()) / 2);
 		// Текстовая область для отображения полученных сообщений
 		textAreaIncoming = new JTextArea(INCOMING_AREA_DEFAULT_ROWS, 0);
 		textAreaIncoming.setEditable(false);
 		// Контейнер, обеспечивающий прокрутку текстовой области
-		final JScrollPane scrollPaneIncoming = 
-		new JScrollPane(textAreaIncoming);
+		final JScrollPane scrollPaneIncoming = new JScrollPane(textAreaIncoming);
 		// Подписи полей
 		final JLabel labelFrom = new JLabel("Подпись");
 		final JLabel labelTo = new JLabel("Получатель");
@@ -65,8 +62,7 @@ public class MainFrame extends JFrame
 		// Текстовая область для ввода сообщения
 		textAreaOutgoing = new JTextArea(OUTGOING_AREA_DEFAULT_ROWS, 0);
 		// Контейнер, обеспечивающий прокрутку текстовой области
-		final JScrollPane scrollPaneOutgoing = 
-		new JScrollPane(textAreaOutgoing);
+		final JScrollPane scrollPaneOutgoing = new JScrollPane(textAreaOutgoing);
 		// Панель ввода сообщения
 		final JPanel messagePanel = new JPanel();
 		messagePanel.setBorder(BorderFactory.createTitledBorder("Сообщение"));
@@ -145,8 +141,7 @@ public class MainFrame extends JFrame
 					while (!Thread.interrupted()) 
 					{
 						final Socket socket = serverSocket.accept();
-						final DataInputStream in = new DataInputStream(
-						socket.getInputStream());
+						final DataInputStream in = new DataInputStream(socket.getInputStream());
 						// Читаем имя отправителя
 						final String senderName = in.readUTF();
 						// Читаем сообщение
@@ -154,11 +149,8 @@ public class MainFrame extends JFrame
 						// Закрываем соединение
 						socket.close();
 						// Выделяем IP-адрес
-						final String address = 
-						((InetSocketAddress) socket
-						.getRemoteSocketAddress())
-						.getAddress()
-						.getHostAddress();
+						final String address = ((InetSocketAddress) socket.getRemoteSocketAddress())
+						.getAddress().getHostAddress();
 						// Выводим сообщение в текстовую область
 						textAreaIncoming.append(senderName + " (" + address + "): " + message + "\n");
 					}
@@ -166,9 +158,7 @@ public class MainFrame extends JFrame
 				catch (IOException e) 
 				{
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(MainFrame.this,
-					"Ошибка в работе сервера", "Ошибка",
-					JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(MainFrame.this,"Ошибка в работе сервера", "Ошибка",JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}).start();
@@ -184,20 +174,19 @@ public class MainFrame extends JFrame
 			final String destinationAddress = textFieldTo.getText();
 			final String message = textAreaOutgoing.getText();
 			// Убеждаемся, что поля не пустые
-			if (senderName.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Введите имя отправителя", "Ошибка",JOptionPane.ERROR_MESSAGE);
-			return;
+			if (senderName.isEmpty()) 
+			{
+				JOptionPane.showMessageDialog(this, "Введите имя отправителя", "Ошибка",JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			if (destinationAddress.isEmpty()) 
 			{
-			JOptionPane.showMessageDialog(this,"Введите адрес узла-получателя", "Ошибка",JOptionPane.ERROR_MESSAGE);
-			return;
+				JOptionPane.showMessageDialog(this,"Введите адрес узла-получателя", "Ошибка",JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 			if (message.isEmpty()) 
 			{
-				JOptionPane.showMessageDialog(this, 
-				"Введите текст сообщения", "Ошибка",
-				JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this,"Введите текст сообщения", "Ошибка",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			// Создаем сокет для соединения
@@ -224,8 +213,7 @@ public class MainFrame extends JFrame
 		{
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(MainFrame.this,
-			"Не удалось отправить сообщение", "Ошибка",
-			JOptionPane.ERROR_MESSAGE);
+			"Не удалось отправить сообщение", "Ошибка",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }
