@@ -1,0 +1,230 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+
+import java.awt.Color;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import javax.swing.JOptionPane;
+
+
+public class JoinServer implements Runnable 
+{
+	// ћаксимальный радиус, который может иметь м€ч
+	private int This_Server_Port;
+	private int ChatServer;
+	private String NameCreator;
+	private String SurnameCreator;
+	private String KeyCreator;
+	
+	private int HowMany1;
+	private String[] NameUsers;
+	private String[] SurnameUsers;
+	private String[] KeyUsers;
+	
+	
+	///Ќаши чаты, на которые перенаправл€ем
+	private int HowMany2;
+	private String[] ChatNames;
+	private String[] ChatAdresses;
+	private int[] ChatPorts;
+	
+	
+	
+	
+
+	//  онструктор класса 
+	public JoinServer(int PORT_A,String Name,String Surname,String Key)
+	{
+		This_Server_Port = PORT_A;
+		//Another_Server_Port = 4489;
+		NameCreator = new String(Name);
+		SurnameCreator = new String(Surname);
+		KeyCreator = new String(Key);
+		
+		
+		CreateDataBase();
+		
+		
+		
+		Thread thisThread = new Thread(this);
+		// «апускаем поток
+		thisThread.start();
+	}
+	// ћетод run() исполн€етс€ внутри потока.  огда он завершает работу, 
+	// то завершаетс€ и поток
+	public void run() 
+	{
+		try 
+		{
+			//  рутим бесконечный цикл, т.е. пока нас не прервут, 
+			// мы не намерены завершатьс€
+			while(true) 
+			{
+				final ServerSocket AuthorisationSocket = new ServerSocket(This_Server_Port);
+				try 
+				{
+					
+					while (!Thread.interrupted()) 
+					{
+						Socket UserSocket = AuthorisationSocket.accept();
+						try {
+								///принимаем соединение всегда
+							    //Socket UserSocket = AuthorisationSocket.accept();
+								final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
+								// данные авторизации
+								String address = ((InetSocketAddress) UserSocket.getRemoteSocketAddress()).getAddress().getHostAddress();
+								String SenderName = in.readUTF();
+								String SenderSurname = in.readUTF();
+								String SenderKey = in.readUTF();
+								String ChatName = in.readUTF();
+								///проверка
+								if (address.isEmpty()) {return;}
+								if (SenderName.isEmpty()) {return;}
+							    if (SenderSurname.isEmpty()) {return;}
+								if (SenderKey.isEmpty()) {return;}
+								if (address.isEmpty()) {return;}
+								
+								
+								
+							    ///все хорошо, данные успешно получены
+								boolean Equal = false;
+								Equal = SenderName.equals(NameCreator) && SenderSurname.equals(SurnameCreator) && SenderKey.equals(KeyCreator);
+								////зашел админ
+								if(Equal)
+								{
+								}
+								
+								///админ не зашел - провер€ем дальше
+								int i = 0;
+								Equal = SenderName.equals(NameUsers[i]) && SenderSurname.equals(SurnameUsers[i]) && SenderKey.equals(KeyUsers[i]);
+								while(i < (HowMany1-1) && (! Equal))
+								{
+									i = i + 1;
+									Equal = SenderName.equals(NameUsers[i]) && SenderSurname.equals(SurnameUsers[i]) && SenderKey.equals(KeyUsers[i]);
+								}
+								/// ѕользователь авторизован - перенаправить его на порт чата
+								if(Equal)
+								{
+									////ћы начинаем с системного если совпадений нет - тогда ситемный чат по умолчанию
+									i = 0;
+									Equal = ChatNames[i].equals(ChatName);
+									while(!Equal && i < (HowMany2-1))
+									{
+										i = i + 1;
+										Equal = ChatNames[i].equals(ChatName);
+									}
+									/// все хорошо - чат указан верно
+									if(Equal) 
+									{
+										
+									}
+									/// перенаправить пользовател€ на системный чат по умолчанию
+									else 
+									{
+										
+									}
+									
+									
+								}
+								/// Ќеверна€ комбинаци€ - проигнорировать
+								else 
+								{
+									////just nothing ignore user....
+								}
+							
+						     }
+						     finally
+						     {
+							       UserSocket.close();
+						     }			
+					}
+				} 
+				finally
+				{
+					AuthorisationSocket.close();
+				}	
+				///ћожно убрать
+				Thread.sleep(100);
+			}
+		} 
+		catch (InterruptedException | IOException ex) 
+		{
+			// ≈сли нас прервали, то ничего не делаем 
+			// и просто выходим (завершаемс€)
+		}
+		
+	}
+	void CreateDataBase()
+	{
+		
+		HowMany1 = 10;
+		NameUsers = new String[HowMany1];
+		SurnameUsers = new String[HowMany1];
+		KeyUsers = new String[HowMany1];
+		
+		for(int i = 0;i < HowMany1;i++)
+		{
+			NameUsers[i] = new String ("1");
+			SurnameUsers[i] = new String ("2");
+			KeyUsers[i] = new String ("3");
+		}
+		
+		NameUsers[0] = new String ("Nikita");
+		SurnameUsers[0] = new String ("Ryndin");
+		KeyUsers[0] = new String ("31428");
+		
+		NameUsers[1] = new String ("Vlad");
+		SurnameUsers[1] = new String ("Kulekow");
+		KeyUsers[1] = new String ("1111");
+		
+		NameUsers[2] = new String ("Shtukatur");
+		SurnameUsers[2] = new String ("Lutkowski");
+		KeyUsers[2] = new String ("2222");
+		
+		
+		
+		
+		HowMany2 = 2;
+		ChatNames = new String[HowMany2];
+		ChatAdresses = new String[HowMany2];
+		ChatPorts = new int[HowMany2];
+		
+		///должен быть системный чат на случай неполадок
+		ChatNames[0] = new String("Default");
+		ChatAdresses[0] = new String("");
+		ChatPorts[0] = 1111;
+		///тестовый вариант
+		ChatNames[1] = new String("Main");
+		ChatAdresses[0] = new String("");
+		ChatAdresses[1] = new String("");
+		ChatPorts[0] = 1111;
+		ChatPorts[1] = 1112;
+		
+	}
+	
+	
+	
+	// ћетод прорисовки самого себ€
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,161 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+
+import java.awt.Color;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import javax.swing.JOptionPane;
+
+
+public class JoinServer implements Runnable 
+{
+	// ћаксимальный радиус, который может иметь м€ч
+	private int This_Server_Port;
+	private int Another_Server_Port;
+	private String NameCreator;
+	private String SurnameCreator;
+	private String KeyCreator;
+	private String[] NameUsers;
+	private String[] SurnameUsers;
+	private String[] KeyUsers;
+	private int HowMany;
+
+	//  онструктор класса BouncingBall
+	public JoinServer(int Port,String Name,String Surname,String Key,String AnotherAdress) 
+	{
+		Server_Port = Port;
+		//Another_Server_Port = 4489;
+		NameCreator = new String(Name);
+		SurnameCreator = new String(Surname);
+		KeyCreator = new String(Key);
+		CreateDataBase();
+		
+		Thread thisThread = new Thread(this);
+		// «апускаем поток
+		thisThread.start();
+	}
+	// ћетод run() исполн€етс€ внутри потока.  огда он завершает работу, 
+	// то завершаетс€ и поток
+	public void run() 
+	{
+		try 
+		{
+			//  рутим бесконечный цикл, т.е. пока нас не прервут, 
+			// мы не намерены завершатьс€
+			while(true) 
+			{
+				final ServerSocket AuthorisationSocket = new ServerSocket(Server_Port);
+				try 
+				{
+					
+					while (!Thread.interrupted()) 
+					{
+						Socket UserSocket = AuthorisationSocket.accept();
+						try {
+								///принимаем соединение всегда
+							    //Socket UserSocket = AuthorisationSocket.accept();
+								final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
+								// данные авторизации
+								String address = ((InetSocketAddress) UserSocket.getRemoteSocketAddress()).getAddress().getHostAddress();
+								String SenderName = in.readUTF();
+								String SenderSurname = in.readUTF();
+								String SenderKey = in.readUTF();
+								///проверка
+								if (address.isEmpty()) {return;}
+								if (SenderName.isEmpty()) {return;}
+							    if (SenderSurname.isEmpty()) {return;}
+								if (SenderKey.isEmpty()) {return;}
+							    ///все хорошо, данные успешно получены
+								int i = 0;
+								boolean Equal = false;
+								Equal = SenderName.equals(NameUsers[i]) && SenderSurname.equals(SurnameUsers[i]) && SenderKey.equals(KeyUsers[i]);
+								while(i < (HowMany-1) && (! Equal))
+								{
+									i = i + 1;
+									Equal = SenderName.equals(NameUsers[i]) && SenderSurname.equals(SurnameUsers[i]) && SenderKey.equals(KeyUsers[i]);
+								}
+								/// ѕользователь авторизован - перенаправить его на порт чата
+								if(Equal)
+								{
+									
+								}
+								/// Ќеверна€ комбинаци€ - сообщить об ошибке
+								else 
+								{
+									
+								}
+							
+						     }
+						     finally
+						     {
+							       UserSocket.close();
+						     }			
+					}
+				} 
+				finally
+				{
+					AuthorisationSocket.close();
+				}	
+				///ћожно убрать
+				Thread.sleep(100);
+			}
+		} 
+		catch (InterruptedException | IOException ex) 
+		{
+			// ≈сли нас прервали, то ничего не делаем 
+			// и просто выходим (завершаемс€)
+		}
+		
+	}
+	void CreateDataBase()
+	{
+		HowMany = 10;
+		NameUsers = new String[HowMany];
+		SurnameUsers = new String[HowMany];
+		KeyUsers = new String[HowMany];
+		
+		for(int i = 0;i < HowMany;i++)
+		{
+			NameUsers[i] = "1";
+			SurnameUsers[i] = "2";
+			KeyUsers[i] = "1";
+		}
+		
+		NameUsers[0] = "Nikita";
+		SurnameUsers[0] = "Ryndin";
+		KeyUsers[0] = "31428";
+		
+		NameUsers[1] = "Vlad";
+		SurnameUsers[1] = "Kulekow";
+		KeyUsers[1] = "1111";
+		
+		NameUsers[2] = "Shtukatur";
+		SurnameUsers[2] = "Lutkowski";
+		KeyUsers[2] = "2222";
+	}
+	
+	
+	// ћетод прорисовки самого себ€
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

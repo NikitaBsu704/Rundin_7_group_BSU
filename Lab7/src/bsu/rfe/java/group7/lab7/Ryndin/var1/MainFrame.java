@@ -36,9 +36,10 @@ public class MainFrame extends JFrame
 	private static final int SMALL_GAP = 5;
 	private static final int MEDIUM_GAP = 10;
 	private static final int LARGE_GAP = 15;
-	private static final int SERVER_PORT = 4567;
-	private final JTextField textFieldFrom;
-	private final JTextField textFieldTo;
+	private static final int User_Port = 4567;
+	private final JTextField textFieldIP;
+	private final JTextField textFieldPort;
+	//private final JTextField textField;
 	private final JTextArea textAreaIncoming;
 	private final JTextArea textAreaOutgoing;
 	public MainFrame() 
@@ -54,11 +55,17 @@ public class MainFrame extends JFrame
 		// Контейнер, обеспечивающий прокрутку текстовой области
 		final JScrollPane scrollPaneIncoming = new JScrollPane(textAreaIncoming);
 		// Подписи полей
-		final JLabel labelFrom = new JLabel("Подпись");
-		final JLabel labelTo = new JLabel("Получатель");
+		final JLabel labelIP = new JLabel("Адрес");
+		final JLabel labelPort = new JLabel("Порт");
 		// Поля ввода имени пользователя и адреса получателя
-		textFieldFrom = new JTextField(FROM_FIELD_DEFAULT_COLUMNS);
-		textFieldTo = new JTextField(TO_FIELD_DEFAULT_COLUMNS);
+		/*
+		textFieldIP = new JTextField("0", 10);
+		textFieldIP.setMaximumSize(textFieldIP.getPreferredSize());
+		textFieldPort = new JTextField("0", 10);
+		textFieldPort.setMaximumSize(textFieldIP.getPreferredSize());
+		*/
+		textFieldIP = new JTextField(FROM_FIELD_DEFAULT_COLUMNS);
+		textFieldPort = new JTextField(TO_FIELD_DEFAULT_COLUMNS);
 		// Текстовая область для ввода сообщения
 		textAreaOutgoing = new JTextArea(OUTGOING_AREA_DEFAULT_ROWS, 0);
 		// Контейнер, обеспечивающий прокрутку текстовой области
@@ -85,13 +92,13 @@ public class MainFrame extends JFrame
 		.addContainerGap()
 		.addGroup(layout2.createParallelGroup(Alignment.TRAILING)
 		.addGroup(layout2.createSequentialGroup()
-		.addComponent(labelFrom)
+		.addComponent(labelIP)
 		.addGap(SMALL_GAP)
-		.addComponent(textFieldFrom)
+		.addComponent(textFieldIP)
 		.addGap(LARGE_GAP)
-		.addComponent(labelTo)
+		.addComponent(labelPort)
 		.addGap(SMALL_GAP)
-		.addComponent(textFieldTo))
+		.addComponent(textFieldPort))
 		.addComponent(scrollPaneOutgoing)
 		.addComponent(sendButton))
 		.addContainerGap());
@@ -99,10 +106,10 @@ public class MainFrame extends JFrame
 		
 		layout2.setVerticalGroup(layout2.createSequentialGroup().addContainerGap()
 		.addGroup(layout2.createParallelGroup(Alignment.BASELINE)
-		.addComponent(labelFrom)
-		.addComponent(textFieldFrom)
-		.addComponent(labelTo)
-		.addComponent(textFieldTo))
+		.addComponent(labelIP)
+		.addComponent(textFieldIP)
+		.addComponent(labelPort)
+		.addComponent(textFieldPort))
 		.addGap(MEDIUM_GAP)
 		.addComponent(scrollPaneOutgoing)
 		.addGap(MEDIUM_GAP)
@@ -137,22 +144,20 @@ public class MainFrame extends JFrame
 			{
 				try 
 				{
-					final ServerSocket serverSocket = new ServerSocket(SERVER_PORT);
+					final ServerSocket serverSocket = new ServerSocket(User_Port);
 					while (!Thread.interrupted()) 
 					{
 						final Socket socket = serverSocket.accept();
 						final DataInputStream in = new DataInputStream(socket.getInputStream());
-						// Читаем имя отправителя
+						// Считываем данные отправителя
+						final String address = ((InetSocketAddress) socket.getRemoteSocketAddress()).getAddress().getHostAddress();
 						final String senderName = in.readUTF();
-						// Читаем сообщение
+						final String senderSurName = in.readUTF();
 						final String message = in.readUTF();
 						// Закрываем соединение
 						socket.close();
-						// Выделяем IP-адрес
-						final String address = ((InetSocketAddress) socket.getRemoteSocketAddress())
-						.getAddress().getHostAddress();
 						// Выводим сообщение в текстовую область
-						textAreaIncoming.append(senderName + " (" + address + "): " + message + "\n");
+						textAreaIncoming.append("IP: "+ address + "\n"+ "( "+senderName + "  |  " + senderSurName + " )" + "\n" + message + "\n");
 					}
 				} 
 				catch (IOException e) 
@@ -170,15 +175,14 @@ public class MainFrame extends JFrame
 		try 
 		{
 			// Получаем необходимые параметры
-			final String senderName = textFieldFrom.getText();
-			final String destinationAddress = textFieldTo.getText();
+			final String destinationAddress = textFieldIP.getText();
+			final int Port = Integer.parseInt(textFieldPort.getText().trim());
+			
+			
+	
 			final String message = textAreaOutgoing.getText();
 			// Убеждаемся, что поля не пустые
-			if (senderName.isEmpty()) 
-			{
-				JOptionPane.showMessageDialog(this, "Введите имя отправителя", "Ошибка",JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			
 			if (destinationAddress.isEmpty()) 
 			{
 				JOptionPane.showMessageDialog(this,"Введите адрес узла-получателя", "Ошибка",JOptionPane.ERROR_MESSAGE);
@@ -189,12 +193,13 @@ public class MainFrame extends JFrame
 				JOptionPane.showMessageDialog(this,"Введите текст сообщения", "Ошибка",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+			
 			// Создаем сокет для соединения
-			final Socket socket = new Socket(destinationAddress, SERVER_PORT);
+			final Socket socket = new Socket(destinationAddress, Port);
 			// Открываем поток вывода данных
 			final DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 			// Записываем в поток имя
-			out.writeUTF(senderName);
+			//out.writeUTF(senderName);
 			// Записываем в поток сообщение
 			out.writeUTF(message);
 			// Закрываем сокет
@@ -212,8 +217,7 @@ public class MainFrame extends JFrame
 		catch (IOException e) 
 		{
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(MainFrame.this,
-			"Не удалось отправить сообщение", "Ошибка",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(MainFrame.this,"Не удалось отправить сообщение", "Ошибка",JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

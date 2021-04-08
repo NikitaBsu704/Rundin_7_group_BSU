@@ -1,0 +1,243 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+import java.awt.Color;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import javax.swing.JOptionPane;
+
+
+public class ServerUser implements Runnable 
+{
+	
+	private String InitServer_IpAdress;
+	private int InitServer_Port;
+	private int This_Server_Port;
+	private int User_Port = 4567;
+	
+	///авторизованные пользователи
+	private int HowMany;
+	private String[] IpAdress;
+	private String[] NameUsers;
+	private String[] SurnameUsers;
+	
+
+	// Конструктор класса BouncingBall
+	public ServerUser(String IPServer,int Port_A,int Port_B) 
+	{
+		InitServer_IpAdress = IPServer;
+		InitServer_Port = Port_A;
+		This_Server_Port = Port_B;
+		HowMany = 1;///тестовый вариант
+		IpAdress = new String[1];
+		NameUsers= new String[1];
+		SurnameUsers= new String[1];
+		IpAdress[0] = new String("127.0.0.1.11111111");
+		NameUsers[0] = new String("TestUserName");
+		SurnameUsers[0] = new String("TestUserSurname");
+		
+		
+		
+		
+		Thread thisThread = new Thread(this);
+		// Запускаем поток
+		thisThread.start();
+	}
+	// Метод run() исполняется внутри потока. Когда он завершает работу, 
+	// то завершается и поток
+	public void run() 
+	{
+		try 
+		{
+			// Крутим бесконечный цикл, т.е. пока нас не прервут, 
+			// мы не намерены завершаться
+			while(true) 
+			{
+				final ServerSocket ServerSocket = new ServerSocket(This_Server_Port);
+				try 
+				{
+					
+					while (!Thread.interrupted()) 
+					{
+						
+						
+						Socket UserSocket = ServerSocket.accept();
+						int i = 0;
+						boolean Equal = false;
+						try {
+							    System.out.println("Server has got some new access...");
+								///принимаем соединение только когда IP совпадает
+								String address = ((InetSocketAddress) UserSocket.getRemoteSocketAddress()).getAddress().getHostAddress();
+								System.out.println("IP");
+								System.out.println(address);
+								
+								////на данный момент я реализовал вход через одну точку
+								/// И сервер и пользователи стучатся в один сокет
+								Equal = InitServer_IpAdress.equals(address);
+								///К нам стучит сервер входа - очередной пользователь добавился
+								if(Equal)
+								{
+									final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
+									String IP = in.readUTF();
+									String Name = in.readUTF();
+									String Surname = in.readUTF();
+									AddUser(IP,Name,Surname);
+									/*
+									///теперь стучимся в сервер входа - нужно сообщить, что все хорошо
+									final DataOutputStream out = new DataOutputStream(UserSocket.getOutputStream());
+									out.writeUTF("True");
+									*/
+									
+									
+									
+									///обязательно закрываем соединение
+									UserSocket.close();
+									String ServerName = new String("ChatServer");
+									String InviteMessage = new String ("You are invited for server \n Port: "+ String.valueOf(This_Server_Port));
+									SendMessageUser(IP,ServerName,ServerName, InviteMessage);
+									
+								}
+								
+								else 
+								{
+									i = 0;
+									Equal = IpAdress[i].equals(address);
+									System.out.println("Try to define user...");
+									System.out.println(address);
+									while(!Equal && i < (HowMany-1) )
+									{
+										i = i+1;
+										Equal = IpAdress[i].equals(address);
+									}
+									///все хорошо Ip адрес найден среди списка - принять соединение
+									/// Если нет - игнорируем соединение и переходим к следующему в очереди
+									if (Equal) 
+									{
+										System.out.println("User defined");
+										final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
+										String SomeMessage = in.readUTF();
+										///Приняли сообщение - закрыли сокет
+										UserSocket.close();
+										///далее самое важное отослать сообщение всем в чат
+										for(i = 0;i < HowMany;i++)
+										{
+											SendMessageUser(IpAdress[i],NameUsers[i],SurnameUsers[i], SomeMessage);
+										}
+									}
+									else 
+									{
+										System.out.println("Permission denied...");
+									}
+									
+								}
+								
+							
+						     }
+						     finally
+						     {
+							       UserSocket.close();
+						     }			
+					}
+				} 
+				finally
+				{
+					ServerSocket.close();
+				}	
+				///Можно убрать
+				Thread.sleep(100);
+			}
+		} 
+		catch (InterruptedException | IOException ex) 
+		{
+			// Если нас прервали, то ничего не делаем 
+			// и просто выходим (завершаемся)
+		}
+		
+	}
+	public void AddUser(String Ip,String Name,String Surname)
+	{
+		
+		System.out.println("Function for add user is launched");
+		String[] IpAdress_old;
+		String[] NameUsers_old;
+		String[] SurnameUsers_old;
+		///присвоение ссылок
+		IpAdress_old = IpAdress;
+		NameUsers_old =  NameUsers;
+		SurnameUsers_old = SurnameUsers;
+		
+		///увеличение размеров
+		IpAdress = new String[HowMany+1];
+		NameUsers = new String[HowMany+1];
+		SurnameUsers = new String[HowMany+1];
+		///копирование
+		for(int i = 0;i < HowMany;i++)
+		{
+			IpAdress[i] = new String (IpAdress_old[i]);
+			NameUsers[i] = new String (NameUsers_old[i]);
+			SurnameUsers[i] = new String (SurnameUsers_old[i]);
+		}
+		///добавление нового
+		IpAdress[HowMany] = new String(Ip);
+		NameUsers[HowMany] = new String(Name);
+		SurnameUsers[HowMany] = new String(Surname);
+		///не забываем обновить счетчик
+		HowMany = HowMany+1;
+		
+		System.out.println("New User data");
+		System.out.println(IpAdress[HowMany-1]);
+		System.out.println(NameUsers[HowMany-1]);
+		System.out.println(SurnameUsers[HowMany-1]);
+		System.out.println(HowMany);
+		
+	}
+	public void SendMessageUser(String Ip,String Name,String Surname,String message)
+	{
+		try 
+		{
+	     final Socket socket = new Socket(Ip, User_Port);
+		 // Открываем поток вывода данных
+		 final DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+		 // Записываем в данные
+		 out.writeUTF(Name);
+		 out.writeUTF(Surname);
+		 out.writeUTF(message);
+		 // Закрываем сокет
+		 socket.close();
+		}
+		catch (UnknownHostException e) 
+		{
+			e.printStackTrace();
+			
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			
+		}
+		
+	}
+	
+	
+	
+	// Метод прорисовки самого себя
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
