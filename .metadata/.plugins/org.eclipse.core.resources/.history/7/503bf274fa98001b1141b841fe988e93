@@ -1,0 +1,9 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+public class ServerUser2 {
+
+	public ServerUser2() {
+		// TODO Auto-generated constructor stub
+	}
+
+}

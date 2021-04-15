@@ -11,15 +11,15 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
-
+//InetSocketAddress
 
 public class ServerUser implements Runnable 
 {
 	
-	private String InitServer_IpAdress;
-	private int InitServer_Port;
-	private int This_Server_Port;
-	private int User_Port = 4567;
+	private String InitServer_IpAdress;//IP адрес сервера-входа
+	private int InitServer_Port;//порт сервера-входа
+	private int User_Server_Port;//порт данного сервера
+	private int User_Port = 4567;//порт пользователя стоит по умолчанию
 	
 	///авторизованные пользователи
 	private int HowMany;
@@ -29,18 +29,18 @@ public class ServerUser implements Runnable
 	
 
 	// Конструктор класса BouncingBall
-	public ServerUser(String IPServer,int Port_A,int Port_B) 
+	public ServerUser(int Port_A,String IPServer,int Port_B) 
 	{
+		User_Server_Port = Port_A;
 		InitServer_IpAdress = IPServer;
-		InitServer_Port = Port_A;
-		This_Server_Port = Port_B;
+		InitServer_Port = Port_B;
 		HowMany = 1;///тестовый вариант
 		IpAdress = new String[1];
 		NameUsers= new String[1];
 		SurnameUsers= new String[1];
-		IpAdress[0] = new String("127.0.0.1.11111111");
-		NameUsers[0] = new String("TestUserName");
-		SurnameUsers[0] = new String("TestUserSurname");
+		IpAdress[0] = new String("127.0.0.1");
+		NameUsers[0] = new String("ABC");
+		SurnameUsers[0] = new String("CBA");
 		
 		
 		
@@ -59,7 +59,7 @@ public class ServerUser implements Runnable
 			// мы не намерены завершаться
 			while(true) 
 			{
-				final ServerSocket ServerSocket = new ServerSocket(This_Server_Port);
+				final ServerSocket ServerSocket = new ServerSocket(User_Server_Port);
 				try 
 				{
 					
@@ -72,17 +72,27 @@ public class ServerUser implements Runnable
 						boolean Equal = false;
 						try {
 							    System.out.println("Server has got some new access...");
-								///принимаем соединение только когда IP совпадает
+								///принимаем соединение только когда IP совпадает и порт
 								String address = ((InetSocketAddress) UserSocket.getRemoteSocketAddress()).getAddress().getHostAddress();
+								//int Port = UserSocket.getLocalPort();
 								System.out.println("IP");
 								System.out.println(address);
+								//System.out.println("Port");
+								//System.out.println(Port);
 								
-								////на данный момент я реализовал вход через одну точку
+								System.out.println("getRemoteSocketAddress()");
+								System.out.println(UserSocket.getRemoteSocketAddress());
+								System.out.println(".getRemoteSocketAddress()).getAddress()");
+								System.out.println(((InetSocketAddress) UserSocket.getRemoteSocketAddress()).getAddress());
+								
+								
+								
 								/// И сервер и пользователи стучатся в один сокет
-								Equal = InitServer_IpAdress.equals(address);
-								///К нам стучит сервер входа - очередной пользователь добавился
+								Equal = InitServer_IpAdress.equals(address) ;//&& (InitServer_Port == Port);
+								///К нам стучит сервер входа - очередной пользователь добавился - принять соединение
 								if(Equal)
 								{
+									 System.out.println("add new user");
 									final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
 									String IP = in.readUTF();
 									String Name = in.readUTF();
@@ -99,50 +109,58 @@ public class ServerUser implements Runnable
 									///обязательно закрываем соединение
 									UserSocket.close();
 									String ServerName = new String("ChatServer");
-									String InviteMessage = new String ("You are invited for server \n Port: "+ String.valueOf(This_Server_Port));
+									String InviteMessage = new String ("You are invited for server \n Port: "+ String.valueOf(User_Server_Port));
 									SendMessageUser(IP,ServerName,ServerName, InviteMessage);
 									
 								}
-								
+								///Либо стучится пользователь либо кто-то еще
 								else 
-								{
-									i = 0;
-									Equal = IpAdress[i].equals(address);
-									System.out.println("Try to define user...");
-									System.out.println(address);
-									while(!Equal && i < (HowMany-1) )
-									{
-										i = i+1;
-										Equal = IpAdress[i].equals(address);
-									}
-									///все хорошо Ip адрес найден среди списка - принять соединение
-									/// Если нет - игнорируем соединение и переходим к следующему в очереди
-									if (Equal) 
-									{
-										System.out.println("User defined");
-										final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
-										String SomeMessage = in.readUTF();
-										///Приняли сообщение - закрыли сокет
-										UserSocket.close();
-										///далее самое важное отослать сообщение всем в чат
-										for(i = 0;i < HowMany;i++)
-										{
-											SendMessageUser(IpAdress[i],NameUsers[i],SurnameUsers[i], SomeMessage);
-										}
-									}
-									else 
-									{
-										System.out.println("Permission denied...");
-									}
+								{   
+									///стучится пользователь
 									
-								}
+										i = 0;
+										Equal = IpAdress[i].equals(address);
+										System.out.println("Try to define user...");
+										System.out.println(address);
+										while(!Equal && i < (HowMany-1) )
+										{
+											i = i+1;
+											Equal = IpAdress[i].equals(address);
+										}
+										///все хорошо Ip адрес найден среди списка - принять соединение
+										/// Если нет - игнорируем соединение и переходим к следующему в очереди
+										if (Equal) 
+										{
+											System.out.println("User defined");
+											final DataInputStream in = new DataInputStream(UserSocket.getInputStream());
+											String SomeMessage = in.readUTF();
+											///Приняли сообщение - закрыли сокет
+											
+											UserSocket.close();
+											///далее самое важное отослать сообщение всем в чат
+											for(i = 0;i < HowMany;i++)
+											{
+												SendMessageUser(IpAdress[i],NameUsers[i],SurnameUsers[i], SomeMessage);
+											}
+										}
+										///к нам стучится пользователь, которого нет в базе данных
+										else 
+										{
+											///just ignore user
+											System.out.println("Permission denied...");
+										}
+								   }
+									
+									
+								
 								
 							
 						     }
 						     finally
 						     {
 							       UserSocket.close();
-						     }			
+						     }
+						
 					}
 				} 
 				finally
@@ -223,10 +241,6 @@ public class ServerUser implements Runnable
 		}
 		
 	}
-	
-	
-	
-	// Метод прорисовки самого себя
 	
 }
 
