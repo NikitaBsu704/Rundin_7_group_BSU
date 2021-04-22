@@ -18,13 +18,9 @@ public class Start
 			@Override
 			public void run() 
 			{
-				
-				JoinFrame frame1 = new JoinFrame();
+				MainFrame frame1 = new MainFrame();
 				frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame1.setVisible(true);
-				MainFrame frame2 = new MainFrame();
-				frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame2.setVisible(true);
 				JoinServer Server1 = new JoinServer(PORT_A);
 				ServerUser Server2 = new ServerUser(PORT_B,"127.0.0.1",PORT_A);
 				ServerUser Server3 = new ServerUser(PORT_C,"127.0.0.1",PORT_A);

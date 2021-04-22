@@ -1,0 +1,100 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import javax.swing.JOptionPane;
+
+public class InstantMessenger extends Thread 
+{
+	final MainFrame UserFrame;///поле связи с MainFrame
+	private static final int User_Port = 4567;
+	
+
+	public InstantMessenger(MainFrame SomeFrame) 
+	{
+		UserFrame = SomeFrame;
+		// TODO Auto-generated constructor stub
+	}
+	public void run() 
+	{
+		try 
+		{
+			final ServerSocket serverSocket = new ServerSocket(User_Port);
+			while (!Thread.interrupted()) 
+			{
+				final Socket socket = serverSocket.accept();
+				final DataInputStream in = new DataInputStream(socket.getInputStream());
+				// Считываем данные отправителя
+				final String address = ((InetSocketAddress) socket.getRemoteSocketAddress()).getAddress().getHostAddress();
+				final String senderName = in.readUTF();
+				final String senderSurName = in.readUTF();
+				final String message = in.readUTF();
+				// Закрываем соединение
+				socket.close();
+				// Выводим сообщение в текстовую область
+				(UserFrame.Get_textAreaIncoming()).append("IP: "+ address + "\n"+ "( "+senderName + "  |  " + senderSurName + " )" + "\n" + message + "\n");
+			}
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(UserFrame,"Ошибка в работе сервера", "Ошибка",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	public void sendMessage() 
+	{
+		try 
+		{
+			// Получаем необходимые параметры
+			
+			
+			
+			final String destinationAddress = (UserFrame.Get_textFieldIP()).getText();
+			final int Port = Integer.parseInt((UserFrame.Get_textFieldPort()).getText().trim());
+			final String message = (UserFrame.Get_textAreaOutgoing()).getText();
+			// Убеждаемся, что поля не пустые
+			
+			if (destinationAddress.isEmpty()) 
+			{
+				JOptionPane.showMessageDialog(UserFrame,"Введите адрес узла-получателя", "Ошибка",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if (message.isEmpty()) 
+			{
+				JOptionPane.showMessageDialog(UserFrame,"Введите текст сообщения", "Ошибка",JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			// Создаем сокет для соединения
+			final Socket socket = new Socket(destinationAddress, Port);
+			// Открываем поток вывода данных
+			final DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			// Записываем в поток имя
+			//out.writeUTF(senderName);
+			// Записываем в поток сообщение
+			out.writeUTF(message);
+			// Закрываем сокет
+			socket.close();
+			
+			
+		} 
+		catch (UnknownHostException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(UserFrame,"Не удалось отправить сообщение: узел-адресат не найден","Ошибка", JOptionPane.ERROR_MESSAGE);
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(UserFrame,"Не удалось отправить сообщение", "Ошибка",JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+}

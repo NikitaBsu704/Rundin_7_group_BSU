@@ -6,4 +6,6 @@
     <fullyQualifiedTypeName name="javax.swing.JTextField"/>
     <fullyQualifiedTypeName name="javax.swing.JFrame"/>
     <fullyQualifiedTypeName name="java.io.DataOutputStream"/>
+    <fullyQualifiedTypeName name="java.util.LinkedList"/>
+    <fullyQualifiedTypeName name="bsu.rfe.java.group7.lab7.Ryndin.var1.MainFrame"/>
 </qualifiedTypeNameHistroy>

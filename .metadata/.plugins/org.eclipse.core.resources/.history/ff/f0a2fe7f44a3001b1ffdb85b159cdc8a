@@ -1,0 +1,17 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+public class Peer 
+{
+	private static String IPAdress;
+	private static String Name;
+	private static String Surname;
+	
+
+	public Peer(String IP,String NamePeer,String SurnamePeer) 
+	{
+		IPAdress = new String(IP);
+		Name = new String(NamePeer);
+		Surname = new String(SurnamePeer);
+	}
+
+}

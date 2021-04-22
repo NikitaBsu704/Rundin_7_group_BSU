@@ -1,0 +1,9 @@
+package bsu.rfe.java.group7.lab7.Ryndin.var1;
+
+public class Peer {
+
+	public Peer() {
+		// TODO Auto-generated constructor stub
+	}
+
+}
