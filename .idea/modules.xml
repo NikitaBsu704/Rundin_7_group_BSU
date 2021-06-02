@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/out/artifacts/lab9_war_exploded/WEB-INF/WEB-INF.iml" filepath="$PROJECT_DIR$/out/artifacts/lab9_war_exploded/WEB-INF/WEB-INF.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/WEB-INF/WEB-INF1.iml" filepath="$PROJECT_DIR$/web/WEB-INF/WEB-INF1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lab9Java.iml" filepath="$PROJECT_DIR$/lab9Java.iml" />
+    </modules>
+  </component>
+</project>

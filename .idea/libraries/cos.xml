@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="cos">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/lab9_war_exploded/WEB-INF/classes/cos.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
